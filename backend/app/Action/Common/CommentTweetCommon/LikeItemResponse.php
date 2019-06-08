@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Action\Tweet;
+namespace App\Action\Common\CommentTweet;
 
-final class LikeTweetResponse
+final class LikeItemResponse
 {
     private $status;
 

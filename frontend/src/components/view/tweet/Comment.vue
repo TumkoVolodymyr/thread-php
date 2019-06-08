@@ -22,6 +22,20 @@
                     <br>
                     {{ comment.body }}
                     <br>
+                    <b-tooltip label="Like" animated>
+                        <a class="level-item" @click="onLikeOrDislikeComment(comment.id)">
+                            <span
+                                class="icon is-medium has-text-info"
+                                :class="{
+                                    'has-text-danger': commentIsLikedByUser(comment.id, user.id)
+                                }"
+                            >
+                                <font-awesome-icon icon="heart" />
+                            </span>
+                            {{ comment.likesCount }}
+                        </a>
+                    </b-tooltip>
+                    <br>
                     <small class="has-text-grey">
                         {{ comment.created | createdDate }}
                     </small>
@@ -32,6 +46,7 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
 import DefaultAvatar from '../../common/DefaultAvatar.vue';
 
 export default {
@@ -39,6 +54,35 @@ export default {
 
     components: {
         DefaultAvatar,
+    },
+
+    computed: {
+
+        ...mapGetters('comment', [
+            'commentIsLikedByUser'
+        ]),
+
+    },
+
+    methods: {
+        ...mapGetters('auth', {
+            user: 'getAuthenticatedUser'
+        }),
+
+        ...mapActions('comment', [
+            'likeOrDislikeComment',
+        ]),
+
+        async onLikeOrDislikeComment(comentId) {
+            try {
+                await this.likeOrDislikeComment({
+                    id: comentId,
+                    userId: this.user.id
+                });
+            } catch (error) {
+                console.error(error.message);
+            }
+        }
     },
 
     props: {

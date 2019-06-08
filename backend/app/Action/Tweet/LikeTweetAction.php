@@ -4,43 +4,40 @@ declare(strict_types=1);
 
 namespace App\Action\Tweet;
 
+use App\Action\Common\CommentTweet\LikeItemAction;
 use App\Entity\Like;
 use App\Repository\LikeRepository;
 use App\Repository\TweetRepository;
-use Illuminate\Support\Facades\Auth;
 
-final class LikeTweetAction
+final class LikeTweetAction extends LikeItemAction
 {
     private $tweetRepository;
-    private $likeRepository;
-
-    private const ADD_LIKE_STATUS = 'added';
-    private const REMOVE_LIKE_STATUS = 'removed';
 
     public function __construct(TweetRepository $tweetRepository, LikeRepository $likeRepository)
     {
+        parent::__construct($likeRepository);
         $this->tweetRepository = $tweetRepository;
-        $this->likeRepository = $likeRepository;
     }
 
-    public function execute(LikeTweetRequest $request): LikeTweetResponse
+    protected function getItemId(int $id): int
     {
-        $tweet = $this->tweetRepository->getById($request->getTweetId());
+        return $this->tweetRepository->getById($id)->id;
+    }
 
-        $userId = Auth::id();
+    protected function isExistLikeForItemByUser(int $itemId, int $userId): bool
+    {
+        return $this->likeRepository->existsForTweetByUser($itemId, $userId);
+    }
 
-        // if user already liked tweet, we remove previous like
-        if ($this->likeRepository->existsForTweetByUser($tweet->id, $userId)) {
-            $this->likeRepository->deleteForTweetByUser($tweet->id, $userId);
+    protected function deleteForItemByUser(int $itemId, int $userId): void
+    {
+        $this->likeRepository->deleteForTweetByUser($itemId, $userId);
+    }
 
-            return new LikeTweetResponse(self::REMOVE_LIKE_STATUS);
-        }
-
+    protected function createLike(int $userId, int $itemId): Like
+    {
         $like = new Like();
-        $like->forTweet(Auth::id(), $tweet->id);
-
-        $this->likeRepository->save($like);
-
-        return new LikeTweetResponse(self::ADD_LIKE_STATUS);
+        $like->forTweet($userId, $itemId);
+        return $like;
     }
 }

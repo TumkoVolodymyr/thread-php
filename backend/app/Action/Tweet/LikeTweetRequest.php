@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Action\Tweet;
 
-final class LikeTweetRequest
+
+use App\Action\Common\CommentTweet\LikeItemRequestInterface;
+
+final class LikeTweetRequest implements LikeItemRequestInterface
 {
     private $tweetId;
 
@@ -16,5 +19,10 @@ final class LikeTweetRequest
     public function getTweetId(): int
     {
         return $this->tweetId;
+    }
+
+    public function getItemId(): int
+    {
+        return $this->getTweetId();
     }
 }

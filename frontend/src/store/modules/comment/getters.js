@@ -16,4 +16,11 @@ export default {
     tweetIsCommentedByUser: (state, getters) => (tweetId, userId) => getters
         .getCommentsByTweetId(tweetId)
         .find(comment => comment.authorId === userId),
+
+    getCommentById: state => id => state.comments[id],
+
+    commentIsLikedByUser: (state, getters) => (commentId, userId) => getters
+        .getCommentById(commentId)
+        .likes
+        .find(like => like.userId === userId) !== undefined
 };

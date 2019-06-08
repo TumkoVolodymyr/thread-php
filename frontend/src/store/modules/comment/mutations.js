@@ -1,4 +1,4 @@
-import { SET_COMMENTS, ADD_COMMENT } from './mutationTypes';
+import { SET_COMMENTS, ADD_COMMENT, LIKE_COMMENT, DISLIKE_COMMENT } from './mutationTypes';
 import { commentMapper } from '@/services/Normalizer';
 
 export default {
@@ -21,4 +21,16 @@ export default {
             [comment.id]: commentMapper(comment)
         };
     },
+
+    [LIKE_COMMENT]: (state, { id, userId }) => {
+        state.comments[id].likesCount++;
+
+        state.comments[id].likes.push({ userId });
+    },
+
+    [DISLIKE_COMMENT]: (state, { id, userId }) => {
+        state.comments[id].likesCount--;
+
+        state.comments[id].likes = state.comments[id].likes.filter(like => like.userId !== userId);
+    }
 };

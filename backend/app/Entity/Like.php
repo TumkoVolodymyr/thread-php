@@ -69,12 +69,22 @@ final class Like extends Model
 
     public function forTweet(int $userId, int $tweetId): void
     {
+        $this->forAbstract($userId, $tweetId, Tweet::class);
+    }
+
+    public function forComment(int $userId, int $commentId): void
+    {
+        $this->forAbstract($userId, $commentId, Comment::class);
+    }
+
+    private function forAbstract(int $userId, int $objectId, string  $class ): void
+    {
         $this->assertIdIsValid($userId);
-        $this->assertIdIsValid($tweetId);
+        $this->assertIdIsValid($objectId);
 
         $this->user_id = $userId;
-        $this->likeable_id = $tweetId;
-        $this->likeable_type = Tweet::class;
+        $this->likeable_id = $objectId;
+        $this->likeable_type = $class;
         $this->created_at = Carbon::now();
     }
 
