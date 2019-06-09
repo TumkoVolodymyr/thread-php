@@ -16,6 +16,17 @@
                         @keyup.ctrl.exact.enter="onPostComment"
                     />
                 </p>
+                <b-field class="file">
+                    <b-upload v-model="image">
+                        <a class="button is-primary">
+                            <b-icon pack="fa" icon="upload" />
+                            <span>Upload image</span>
+                        </a>
+                    </b-upload>
+                    <span class="file-name" v-if="image">
+                        {{ image.name }}
+                    </span>
+                </b-field>
             </div>
             <div class="field">
                 <p class="control">
@@ -52,6 +63,8 @@ export default {
 
     data: () => ({
         text: '',
+        image: null,
+        errorMessage: ''
     }),
 
     computed: {
@@ -63,20 +76,42 @@ export default {
     methods: {
         ...mapActions('comment', [
             'addComment',
+            'uploadCommentImage',
         ]),
 
         clearInput() {
             this.text = '';
         },
 
-        async onPostComment() {
-            await this.addComment({
-                tweetId: this.tweetId,
-                text: this.text,
-            });
-
-            this.clearInput();
+        clearImage() {
+            this.image = null;
         },
+
+        async onPostComment() {
+            try {
+                const comment = await this.addComment({
+                    tweetId: this.tweetId,
+                    text: this.text,
+                });
+
+                if (this.image !== null) {
+                    await this.uploadCommentImage({
+                        id: comment.id,
+                        imageFile: this.image
+                    });
+                }
+
+                this.clearInput();
+                this.clearImage();
+            } catch (error) {
+                this.showErrorMessage(error.message);
+            }
+        },
+
+        showErrorMessage(msg) {
+            this.errorMessage = msg;
+        }
+
     },
 };
 </script>

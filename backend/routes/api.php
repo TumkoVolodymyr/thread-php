@@ -54,6 +54,8 @@ Route::prefix('v1')->group(function () {
             Route::get('/', 'CommentController@getCommentCollection');
             Route::get('/{id}', 'CommentController@getCommentById');
             Route::post('/', 'CommentController@newComment');
+            Route::put('/{id}', 'CommentController@updateCommentById');
+            Route::post('/{id}/image', 'CommentController@uploadCommentImage');
             Route::put('/{id}/like', 'LikeController@likeOrDislikeComment');
         });
     });

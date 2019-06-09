@@ -15,6 +15,9 @@ services:
       build: ./docker/php-fpm
       container_name: thread-app
       working_dir: /var/www/app
+      environment:
+        XDEBUG_CONFIG: "remote_host=host.docker.internal remote_enable=1"
+        PHP_IDE_CONFIG: "serverName=Docker"
       volumes:
         - .:/var/www/app
         - ./docker/php-fpm/php-ini-overrides.ini:/etc/php/7.3/fpm/conf.d/99-overrides.ini

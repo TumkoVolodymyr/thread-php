@@ -67,6 +67,7 @@ return [
     ],
 
     'tweet_images_dir' => 'tweet-images',
+    'comment_images_dir' => 'comment-images',
     'profile_images_dir' => 'profile-images'
 
 ];

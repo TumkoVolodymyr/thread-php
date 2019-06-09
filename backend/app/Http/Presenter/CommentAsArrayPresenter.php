@@ -25,6 +25,7 @@ final class CommentAsArrayPresenter implements CollectionAsArrayPresenter
             'body' => $comment->getBody(),
             'author_id' => $comment->getAuthorId(),
             'tweet_id' => $comment->getTweetId(),
+            'image_url' => $comment->getImageUrl(),
             'created_at' => $comment->getCreatedAt()->toDateTimeString(),
             'updated_at' => $comment->getUpdatedAt() ? $comment->getUpdatedAt()->toDateTimeString() : null,
             'author' => $this->userArrayPresenter->present($comment->author),
