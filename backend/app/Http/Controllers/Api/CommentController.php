@@ -6,6 +6,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Action\Comment\AddCommentAction;
 use App\Action\Comment\AddCommentRequest;
+use App\Action\Comment\DeleteCommentAction;
+use App\Action\Comment\DeleteCommentRequest;
 use App\Action\Comment\GetCommentByIdAction;
 use App\Action\Comment\GetCommentCollectionAction;
 use App\Action\Comment\GetCommentCollectionByTweetIdAction;
@@ -36,9 +38,14 @@ final class CommentController extends ApiController
      * @var UploadCommentImageAction
      */
     private $uploadCommentImageAction;
+    /**
+     * @var DeleteCommentAction
+     */
+    private $deleteCommentAction;
 
     public function __construct(
         UpdateCommentAction $updateCommentAction,
+        DeleteCommentAction $deleteCommentAction,
         UploadCommentImageAction $uploadCommentImageAction,
         GetCommentCollectionAction $getCommentCollectionAction,
         CommentAsArrayPresenter $presenter,
@@ -53,6 +60,7 @@ final class CommentController extends ApiController
         $this->getCommentCollectionByTweetIdAction = $getCommentCollectionByTweetIdAction;
         $this->updateCommentAction = $updateCommentAction;
         $this->uploadCommentImageAction = $uploadCommentImageAction;
+        $this->deleteCommentAction = $deleteCommentAction;
     }
 
     public function getCommentCollection(CollectionHttpRequest $request): ApiResponse
@@ -135,5 +143,16 @@ final class CommentController extends ApiController
                 $response->getComment()
             )
         );
+    }
+
+    public function deleteCommentById(string $id): ApiResponse
+    {
+        $this->deleteCommentAction->execute(
+            new DeleteCommentRequest(
+                (int)$id
+            )
+        );
+
+        return $this->createDeletedResponse();
     }
 }

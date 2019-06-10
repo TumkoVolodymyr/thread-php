@@ -54,7 +54,7 @@
                 <div v-if="isCommentOwner(comment.id, user.id)" class="column is-narrow is-12-mobile">
                     <div class="buttons">
                         <b-button type="is-warning" @click="$emit('edit-comment', comment)">Edit</b-button>
-                        <b-button type="is-danger">Delete</b-button>
+                        <b-button type="is-danger" @click="onDeleteComment(comment)">Delete</b-button>
                     </div>
                 </div>
             </div>
@@ -65,6 +65,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import DefaultAvatar from '../../common/DefaultAvatar.vue';
+import showStatusToast from '../../mixin/showStatusToast';
 
 export default {
     name: 'Comment',
@@ -72,6 +73,8 @@ export default {
     components: {
         DefaultAvatar,
     },
+
+    mixins: [showStatusToast],
 
     computed: {
         ...mapGetters('auth', {
@@ -89,6 +92,7 @@ export default {
 
         ...mapActions('comment', [
             'likeOrDislikeComment',
+            'deleteComment',
         ]),
 
         async onLikeOrDislikeComment(comentId) {
@@ -100,7 +104,25 @@ export default {
             } catch (error) {
                 console.error(error.message);
             }
-        }
+        },
+
+        onDeleteComment(comment) {
+            this.$dialog.confirm({
+                title: 'Deleting comment',
+                message: 'Are you sure you want to <b>delete</b> your comment? This action cannot be undone.',
+                confirmText: 'Delete Comment',
+                type: 'is-danger',
+
+                onConfirm: async () => {
+                    try {
+                        await this.deleteComment(comment);
+                        this.showSuccessMessage('Comment deleted!');
+                    } catch {
+                        this.showErrorMessage('Unable to delete comment!');
+                    }
+                }
+            });
+        },
     },
 
     props: {

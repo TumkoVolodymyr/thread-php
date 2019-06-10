@@ -1,4 +1,4 @@
-import { SET_COMMENTS, SET_COMMENT, SET_COMMENT_IMAGE, ADD_COMMENT, LIKE_COMMENT, DISLIKE_COMMENT } from './mutationTypes';
+import { SET_COMMENTS, SET_COMMENT, SET_COMMENT_IMAGE, ADD_COMMENT, DELETE_COMMENT, LIKE_COMMENT, DISLIKE_COMMENT } from './mutationTypes';
 import { commentMapper } from '@/services/Normalizer';
 
 export default {
@@ -20,6 +20,12 @@ export default {
             ...state.comments,
             [comment.id]: commentMapper(comment)
         };
+    },
+
+    [DELETE_COMMENT]: (state, id) => {
+        const comments = { ...state.comments };
+        delete comments[id];
+        state.comments = comments ;
     },
 
     [LIKE_COMMENT]: (state, { id, userId }) => {
