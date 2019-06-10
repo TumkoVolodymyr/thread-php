@@ -30,6 +30,7 @@ export const commentMapper = comment => ({
     created: comment.created_at,
     updated: comment.updated_at,
     author: userMapper(comment.author),
+    imageUrl: comment.image_url,
     likesCount: comment.likes_count,
     likes: comment.likes.map(likeMapper)
 });

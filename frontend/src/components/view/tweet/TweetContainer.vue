@@ -85,6 +85,7 @@
                     <Comment
                         :key="comment.id"
                         :comment="comment"
+                        @edit-comment="onEditComment"
                     />
                 </template>
 
@@ -101,6 +102,13 @@
         <b-modal :active.sync="isEditTweetModalActive" has-modal-card>
             <EditTweetForm :tweet="tweet" />
         </b-modal>
+
+        <b-modal v-if="editableComment" :active.sync="isEditCommentModalActive" has-modal-card>
+            <EditCommentForm
+                :comment="editableComment"
+                @edit-comment-finished="onEditCommentFinished"
+            />
+        </b-modal>
     </div>
 </template>
 
@@ -108,6 +116,7 @@
 import { mapGetters, mapActions } from 'vuex';
 import Comment from './Comment.vue';
 import NewCommentForm from './NewCommentForm.vue';
+import EditCommentForm from './EditCommentForm.vue';
 import EditTweetForm from './EditTweetForm.vue';
 import DefaultAvatar from '../../common/DefaultAvatar.vue';
 import showStatusToast from '../../mixin/showStatusToast';
@@ -116,6 +125,7 @@ export default {
     name: 'TweetContainer',
 
     components: {
+        EditCommentForm,
         Comment,
         NewCommentForm,
         EditTweetForm,
@@ -126,6 +136,7 @@ export default {
 
     data: () => ({
         isEditTweetModalActive: false,
+        editableComment: null,
         isImageModalActive: false
     }),
 
@@ -155,6 +166,14 @@ export default {
             'tweetIsCommentedByUser'
         ]),
 
+        isEditCommentModalActive: {
+            get() { return this.editableComment !== null; },
+
+            set: function (val) {
+                this.editableComment = val;
+            }
+        },
+
         tweet() {
             return this.getTweetById(this.$route.params.id);
         },
@@ -173,6 +192,14 @@ export default {
 
         onEditTweet() {
             this.isEditTweetModalActive = true;
+        },
+
+        onEditComment(comment) {
+            this.editableComment = comment;
+        },
+
+        onEditCommentFinished() {
+            this.editableComment = null;
         },
 
         onDeleteTweet() {

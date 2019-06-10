@@ -19,6 +19,8 @@ export default {
 
     getCommentById: state => id => state.comments[id],
 
+    isCommentOwner: (state, getters) => (commentId, userId) => getters.getCommentById(commentId).authorId === userId,
+
     commentIsLikedByUser: (state, getters) => (commentId, userId) => getters
         .getCommentById(commentId)
         .likes

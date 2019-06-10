@@ -20,6 +20,7 @@ use InvalidArgumentException;
  * @property Carbon $created_at
  * @property Carbon|null $updated_at
  * @property int $likes_count
+ * @property string $image_url
  */
 final class Comment extends Model
 {
@@ -28,7 +29,8 @@ final class Comment extends Model
     protected $fillable = [
         'body',
         'author_id',
-        'tweet_id'
+        'tweet_id',
+        'image_url'
     ];
 
     // Eager load related entities count each time.
@@ -94,5 +96,19 @@ final class Comment extends Model
     public function getLikesCount(): int
     {
         return (int)$this->likes_count;
+    }
+
+    public function getImageUrl(): ?string
+    {
+        return $this->image_url;
+    }
+
+    public function changeImage(string $imageUrl): void
+    {
+        if (empty($imageUrl)) {
+            throw new InvalidArgumentException('Empty image url.');
+        }
+
+        $this->image_url = $imageUrl;
     }
 }

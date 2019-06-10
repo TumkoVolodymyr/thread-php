@@ -4,6 +4,7 @@ import {
     SET_TWEET,
     DELETE_TWEET,
     INCREMENT_COMMENTS_COUNT,
+    DECREMENT_COMMENTS_COUNT,
     LIKE_TWEET,
     DISLIKE_TWEET
 } from './mutationTypes';
@@ -37,6 +38,10 @@ export default {
 
     [INCREMENT_COMMENTS_COUNT]: (state, id) => {
         state.tweets[id].commentsCount++;
+    },
+
+    [DECREMENT_COMMENTS_COUNT]: (state, id) => {
+        state.tweets[id].commentsCount--;
     },
 
     [LIKE_TWEET]: (state, { id, userId }) => {
