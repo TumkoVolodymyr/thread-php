@@ -35,13 +35,21 @@
                 <nav class="level is-mobile">
                     <div class="level-left auto-cursor">
                         <a class="level-item auto-cursor">
-                            <span class="icon is-medium has-text-info">
+                            <span class="icon is-medium has-text-info"
+                              :class="{
+                                'has-text-danger': tweetIsCommented
+                              }"
+                            >
                                 <font-awesome-icon icon="comments" />
                             </span>
                             {{ tweet.commentsCount }}
                         </a>
                         <a class="level-item auto-cursor">
-                            <span class="icon is-medium has-text-info">
+                            <span class="icon is-medium has-text-info"
+                              :class="{
+                                'has-text-danger': tweetIsLikedByUser(tweet.id, user.id)
+                              }"
+                            >
                                 <font-awesome-icon icon="heart" />
                             </span>
                             {{ tweet.likesCount }}
@@ -54,6 +62,7 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex';
 import DefaultAvatar from './DefaultAvatar.vue';
 
 export default {
@@ -68,7 +77,30 @@ export default {
             type: Object,
             required: true,
         },
+        isCommented: {
+            type: Boolean,
+            required: true,
+        }
     },
+
+    data: () => ({
+        commentByUserTweets: null
+    }),
+
+    computed: {
+        ...mapGetters('auth', {
+            user: 'getAuthenticatedUser'
+        }),
+
+        ...mapGetters('tweet', [
+            'tweetIsLikedByUser'
+        ]),
+
+        tweetIsCommented() {
+            return this.isCommented;
+        }
+    },
+
 };
 </script>
 

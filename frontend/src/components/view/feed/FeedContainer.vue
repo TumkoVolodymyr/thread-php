@@ -14,7 +14,10 @@
             </b-button>
         </div>
 
-        <TweetPreviewList :tweets="tweets" @infinite="infiniteHandler" />
+        <TweetPreviewList
+            :tweets="tweets"
+            :commentedTweets="userCommentedTweets"
+            @infinite="infiniteHandler" />
 
         <b-modal :active.sync="isNewTweetModalActive" has-modal-card>
             <NewTweetForm />
@@ -42,14 +45,15 @@ export default {
 
     data: () => ({
         isNewTweetModalActive: false,
+        commentedTweets: [],
         page: 1,
     }),
 
     async created() {
         try {
-            await this.fetchTweets({
-                page: 1
-            });
+            const page = { page: 1 };
+            await this.fetchTweets(page);
+            await this.updateCommentedTweets(page);
         } catch (error) {
             this.showErrorMessage(error.message);
         }
@@ -69,11 +73,16 @@ export default {
         ...mapGetters('tweet', {
             tweets: 'tweetsSortedByCreatedDate'
         }),
+
+        userCommentedTweets() {
+            return this.commentedTweets;
+        }
     },
 
     methods: {
         ...mapActions('tweet', [
             'fetchTweets',
+            'fetchCommentedTweets',
         ]),
 
         onAddTweetClick() {
@@ -86,7 +95,9 @@ export default {
 
         async infiniteHandler($state) {
             try {
-                const tweets = await this.fetchTweets({ page: this.page + 1 });
+                const page = { page: this.page + 1 };
+                const tweets = await this.fetchTweets(page);
+                await this.updateCommentedTweets(page);
 
                 if (tweets.length) {
                     this.page += 1;
@@ -99,6 +110,11 @@ export default {
                 $state.complete();
             }
         },
+
+        async updateCommentedTweets(page) {
+            const commentedTweets = await this.fetchCommentedTweets(page);
+            this.commentedTweets = [...this.commentedTweets, ...commentedTweets];
+        }
     },
 };
 </script>

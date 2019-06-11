@@ -30,6 +30,17 @@ export default {
         }
     },
 
+    async fetchCommentedTweets({ commit }, { page }) {
+        try {
+            const tweets = await api.get('/tweets/get-commented', { page });
+            return Promise.resolve(
+                tweets.map(tweet => tweet.id)
+            );
+        } catch (error) {
+            return Promise.reject(error);
+        }
+    },
+
     async fetchTweetsByUserId({ commit }, { userId, params }) {
         commit(SET_LOADING, true, { root: true });
         try {
