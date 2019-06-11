@@ -16,7 +16,7 @@
 
         <TweetPreviewList
             :tweets="tweets"
-            :commentedTweets="userCommentedTweets"
+            :commentedTweets="commentedTweets"
             @infinite="infiniteHandler" />
 
         <b-modal :active.sync="isNewTweetModalActive" has-modal-card>
@@ -73,10 +73,6 @@ export default {
         ...mapGetters('tweet', {
             tweets: 'tweetsSortedByCreatedDate'
         }),
-
-        userCommentedTweets() {
-            return this.commentedTweets;
-        }
     },
 
     methods: {

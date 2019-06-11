@@ -37,7 +37,7 @@
                         <a class="level-item auto-cursor">
                             <span class="icon is-medium has-text-info"
                               :class="{
-                                'has-text-danger': tweetIsCommented
+                                'has-text-danger': isCommented
                               }"
                             >
                                 <font-awesome-icon icon="comments" />
@@ -95,10 +95,6 @@ export default {
         ...mapGetters('tweet', [
             'tweetIsLikedByUser'
         ]),
-
-        tweetIsCommented() {
-            return this.isCommented;
-        }
     },
 
 };
