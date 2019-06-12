@@ -10,6 +10,7 @@ use App\Action\Tweet\AddTweetAction;
 use App\Action\Tweet\AddTweetRequest;
 use App\Action\Tweet\DeleteTweetAction;
 use App\Action\Tweet\DeleteTweetRequest;
+use App\Action\Tweet\GetCommentedByCurrentUserTweetCollectionAction;
 use App\Action\Tweet\GetTweetByIdAction;
 use App\Action\Tweet\GetTweetCollectionAction;
 use App\Action\Tweet\GetTweetCollectionByUserIdAction;
@@ -36,9 +37,11 @@ final class TweetController extends ApiController
     private $updateTweetAction;
     private $uploadTweetImageAction;
     private $deleteTweetAction;
+    private $getCommentedByCurrentUserTweetCollectionAction;
 
     public function __construct(
         GetTweetCollectionAction $getTweetCollectionAction,
+        GetCommentedByCurrentUserTweetCollectionAction $getCommentedByCurrentUserTweetCollectionAction,
         TweetArrayPresenter $presenter,
         GetTweetByIdAction $getTweetByIdAction,
         GetTweetCollectionByUserIdAction $getTweetCollectionByUserIdAction,
@@ -48,6 +51,7 @@ final class TweetController extends ApiController
         DeleteTweetAction $deleteTweetAction
     ) {
         $this->getTweetCollectionAction = $getTweetCollectionAction;
+        $this->getCommentedByCurrentUserTweetCollectionAction = $getCommentedByCurrentUserTweetCollectionAction;
         $this->presenter = $presenter;
         $this->getTweetByIdAction = $getTweetByIdAction;
         $this->getTweetCollectionByUserIdAction = $getTweetCollectionByUserIdAction;
@@ -60,6 +64,19 @@ final class TweetController extends ApiController
     public function getTweetCollection(CollectionHttpRequest $request): ApiResponse
     {
         $response = $this->getTweetCollectionAction->execute(
+            new GetCollectionRequest(
+                (int)$request->query('page'),
+                $request->query('sort'),
+                $request->query('direction')
+            )
+        );
+
+        return $this->createPaginatedResponse($response->getPaginator(), $this->presenter);
+    }
+
+    public function getCommentedByCurrentUserTweetCollection(CollectionHttpRequest $request): ApiResponse
+    {
+        $response = $this->getCommentedByCurrentUserTweetCollectionAction->execute(
             new GetCollectionRequest(
                 (int)$request->query('page'),
                 $request->query('sort'),

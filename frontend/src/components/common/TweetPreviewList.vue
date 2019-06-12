@@ -5,6 +5,7 @@
                 <TweetPreview
                     :key="tweet.id"
                     :tweet="tweet"
+                    :isCommented="tweetIsCommented(tweet.id)"
                     @click="onTweetClick"
                 />
             </template>
@@ -29,6 +30,10 @@ export default {
             type: Array,
             required: true
         },
+        commentedTweets: {
+            type: Array,
+            required: true
+        },
     },
 
     components: {
@@ -43,6 +48,10 @@ export default {
 
         infiniteHandler($state) {
             this.$emit('infinite', $state);
+        },
+
+        tweetIsCommented(tweetId) {
+            return this.commentedTweets.indexOf(tweetId) > -1;
         },
     },
 };

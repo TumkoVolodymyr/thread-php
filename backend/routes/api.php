@@ -39,6 +39,7 @@ Route::prefix('v1')->group(function () {
             'prefix' => '/tweets',
         ], function () {
             Route::get('/', 'TweetController@getTweetCollection');
+            Route::get('/get-commented', 'TweetController@getCommentedByCurrentUserTweetCollection');
             Route::post('/', 'TweetController@addTweet');
             Route::get('/{id}', 'TweetController@getTweetById');
             Route::get('/{id}/comments', 'CommentController@getCommentCollectionByTweetId');
