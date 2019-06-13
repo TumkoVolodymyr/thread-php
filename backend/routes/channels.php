@@ -18,3 +18,7 @@ Broadcast::channel('App.User.{id}', function ($user, $id) {
 Broadcast::channel('tweets', function () {
     return true;
 });
+
+Broadcast::channel('tweet.{tweetId}', function () {
+    return true;
+});

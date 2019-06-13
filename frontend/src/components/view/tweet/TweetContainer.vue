@@ -120,6 +120,8 @@ import EditCommentForm from './EditCommentForm.vue';
 import EditTweetForm from './EditTweetForm.vue';
 import DefaultAvatar from '../../common/DefaultAvatar.vue';
 import showStatusToast from '../../mixin/showStatusToast';
+import { pusher } from '@/services/Pusher';
+import { SET_COMMENT } from '@/store/modules/comment/mutationTypes';
 
 export default {
     name: 'TweetContainer',
@@ -145,6 +147,12 @@ export default {
             await this.fetchTweetById(this.$route.params.id);
 
             this.fetchComments(this.tweet.id);
+
+            const channel = pusher.subscribe(`private-tweet.${this.tweet.id}`);
+
+            channel.bind('comment.added', (data) => {
+                this.$store.commit(`comment/${SET_COMMENT}`, data.comment);
+            });
         } catch (error) {
             console.error(error.message);
         }
