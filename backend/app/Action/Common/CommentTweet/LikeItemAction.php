@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Action\Common\CommentTweet;
 
 use App\Entity\Like;
+use App\Events\LikeAdded;
 use App\Repository\LikeRepository;
 use Illuminate\Support\Facades\Auth;
 
@@ -35,6 +36,7 @@ abstract class LikeItemAction
         $like = $this->createLike($userId, $itemId);
         $this->likeRepository->save($like);
 
+        LikeAdded::dispatch($like);
         return new LikeItemResponse(self::ADD_LIKE_STATUS);
     }
 

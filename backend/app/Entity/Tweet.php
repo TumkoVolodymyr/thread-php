@@ -113,4 +113,13 @@ final class Tweet extends Model
 
         $this->image_url = $imageUrl;
     }
+
+    public function getLikeAddedEmailText(): string
+    {
+        return $this->text;
+    }
+    public function getLikeAddedEmailType(): string
+    {
+        return 'tweet';
+    }
 }
