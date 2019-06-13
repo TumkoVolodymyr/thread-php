@@ -111,4 +111,13 @@ final class Comment extends Model
 
         $this->image_url = $imageUrl;
     }
+
+    public function getLikeAddedEmailText(): string
+    {
+        return $this->body;
+    }
+    public function getLikeAddedEmailType(): string
+    {
+        return 'comment';
+    }
 }
