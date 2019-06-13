@@ -53,7 +53,7 @@ export default {
         try {
             const page = { page: 1 };
             await this.fetchTweets(page);
-            await this.updateCommentedTweets(page);
+            this.updateCommentedTweets(page);
         } catch (error) {
             this.showErrorMessage(error.message);
         }
@@ -93,7 +93,7 @@ export default {
             try {
                 const page = { page: this.page + 1 };
                 const tweets = await this.fetchTweets(page);
-                await this.updateCommentedTweets(page);
+                this.updateCommentedTweets(page);
 
                 if (tweets.length) {
                     this.page += 1;
