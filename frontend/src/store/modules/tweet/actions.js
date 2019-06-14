@@ -30,7 +30,7 @@ export default {
         }
     },
 
-    async fetchCommentedTweets({ commit }, { page }) {
+    async fetchCommentedTweets({ }, { page }) {
         try {
             const tweets = await api.get('/tweets/get-commented', { page });
             return Promise.resolve(
