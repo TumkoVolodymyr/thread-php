@@ -17,6 +17,9 @@ Route::prefix('v1')->group(function () {
     Route::group(['prefix' => 'auth', 'namespace' => 'Api\\Auth'], function () {
         Route::post('/register', 'AuthController@register');
         Route::post('/login', 'AuthController@login');
+        Route::post('/reset', 'AuthController@resetPassword');
+        Route::post('/check-code', 'AuthController@checkResetCode');
+        Route::post('/change-password', 'AuthController@setNewPassword');
         Route::get('/me', 'AuthController@me');
         Route::put('/me', 'AuthController@update');
         Route::post('/me/image', 'AuthController@uploadProfileImage');

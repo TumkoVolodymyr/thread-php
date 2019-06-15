@@ -26,6 +26,70 @@ export default {
         }
     },
 
+    async reset({ commit }, { email }) {
+        commit(SET_LOADING, true, { root: true });
+
+        try {
+            const data = await api.post('/auth/reset', {
+                email
+            });
+
+            commit(SET_LOADING, false, { root: true });
+
+            return Promise.resolve(data.message);
+        } catch (errorMsg) {
+            commit(SET_LOADING, false, { root: true });
+
+            return Promise.reject(errorMsg);
+        }
+    },
+
+    async checkCode({ commit }, { email, code }) {
+        commit(SET_LOADING, true, { root: true });
+
+        try {
+            const data = await api.post('/auth/check-code', {
+                email,
+                code
+            });
+
+            commit(SET_LOADING, false, { root: true });
+
+            return Promise.resolve({
+                message: data.message,
+                token: data.token,
+            });
+        } catch (errorMsg) {
+            commit(SET_LOADING, false, { root: true });
+
+            return Promise.reject(errorMsg);
+        }
+    },
+
+    async changePassword({ commit }, { email, token, password }) {
+        commit(SET_LOADING, true, { root: true });
+
+        try {
+            const data = await api.post('/auth/change-password', {
+                email,
+                token,
+                password
+            });
+
+            commit(USER_LOGIN, {
+                accessToken: data.access_token,
+                tokenType: data.token_type
+            });
+            commit(SET_LOADING, false, { root: true });
+
+            return Promise.resolve();
+        } catch (errorMsg) {
+            commit(SET_LOADING, false, { root: true });
+
+            return Promise.reject(errorMsg);
+        }
+    },
+
     async signUp({ commit }, {
         firstName,
         lastName,

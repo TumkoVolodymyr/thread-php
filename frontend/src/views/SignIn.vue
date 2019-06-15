@@ -11,6 +11,12 @@
                                     Sign up
                                 </router-link>
                             </p>
+                            <p class="subtitle">
+                                Forgot password?
+                                <router-link class="link" to="/auth/reset">
+                                    Reset
+                                </router-link>
+                            </p>
 
                             <form
                                 class="form"

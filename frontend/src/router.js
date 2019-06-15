@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Storage from '@/services/Storage';
+import ResetPassword from "./views/ResetPassword";
 
 // async components
 const Feed = () => import(/* webpackChunkName: "feed" */ './views/Feed.vue');
@@ -57,6 +58,12 @@ const router = new Router({
             path: '/auth/sign-up',
             name: 'auth.signUp',
             component: SignUp,
+            meta: { handleAuth: true },
+        },
+        {
+            path: '/auth/reset',
+            name: 'auth.reset',
+            component: ResetPassword,
             meta: { handleAuth: true },
         },
     ],

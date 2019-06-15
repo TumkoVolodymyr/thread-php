@@ -34,6 +34,16 @@ final class UserRepository implements Paginable
         return User::findOrFail($id);
     }
 
+    /**
+     * @param string $email
+     * @return User
+     * @throws ModelNotFoundException
+     */
+    public function getByEmail(string $email): User
+    {
+        return User::whereEmail($email)->firstOrFail();
+    }
+
     public function save(User $user): User
     {
         $user->save();
