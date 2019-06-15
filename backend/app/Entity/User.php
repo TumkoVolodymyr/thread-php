@@ -22,6 +22,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property string|null $profile_image
  * @property Carbon $created_at
  * @property Carbon|null $updated_at
+ * @property int $reset_code
+ * @property Carbon|null $reset_code_created_at
  */
 final class User extends Authenticatable implements JWTSubject
 {
@@ -41,6 +43,10 @@ final class User extends Authenticatable implements JWTSubject
         'profile_image'
     ];
 
+    protected $dates = [
+        'reset_code_created_at',
+    ];
+
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -50,6 +56,8 @@ final class User extends Authenticatable implements JWTSubject
         'password',
         'remember_token',
         'email_verified_at',
+        'reset_code_created_at',
+        'reset_code',
         'created_at',
         'updated_at'
     ];

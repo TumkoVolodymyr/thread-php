@@ -10,6 +10,9 @@ use App\Action\Auth\LoginRequest;
 use App\Action\Auth\LogoutAction;
 use App\Action\Auth\RegisterAction;
 use App\Action\Auth\RegisterRequest;
+use App\Action\Auth\ResetPassword\CheckResetCodeAction;
+use App\Action\Auth\ResetPassword\ResetAction;
+use App\Action\Auth\ResetPassword\SetNewPasswordAction;
 use App\Action\Auth\UpdateProfileAction;
 use App\Action\Auth\UpdateProfileRequest;
 use App\Action\Auth\UploadProfileImageAction;
@@ -17,8 +20,11 @@ use App\Action\Auth\UploadProfileImageRequest;
 use App\Http\Controllers\ApiController;
 use App\Http\Presenter\AuthenticationResponseArrayPresenter;
 use App\Http\Presenter\UserArrayPresenter;
+use App\Http\Request\Api\Auth\CheckResetCodeHttpRequest;
 use App\Http\Request\Api\Auth\RegisterHttpRequest;
 use App\Http\Request\Api\Auth\LoginHttpRequest;
+use App\Http\Request\Api\Auth\ResetPasswordHttpRequest;
+use App\Http\Request\Api\Auth\SetNewPasswordHttpRequest;
 use App\Http\Request\Api\Auth\UpdateProfileHttpRequest;
 use App\Http\Request\Api\Auth\UploadProfileImageHttpRequest;
 use App\Http\Response\ApiResponse;
@@ -27,7 +33,7 @@ final class AuthController extends ApiController
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'resetPassword', 'setNewPassword', 'checkResetCode']]);
     }
 
     public function register(
@@ -45,6 +51,37 @@ final class AuthController extends ApiController
         $response = $action->execute($request);
 
         return $this->createSuccessResponse($authenticationResponseArrayPresenter->present($response));
+    }
+
+    public function resetPassword(
+        ResetPasswordHttpRequest $httpRequest,
+        ResetAction $action
+    ) {
+        $response = $action->execute($httpRequest);
+
+        return $this->createSuccessResponse(['message' => $response->getMessage()]);
+    }
+
+    public function setNewPassword(
+        SetNewPasswordHttpRequest $httpRequest,
+        SetNewPasswordAction $action,
+        AuthenticationResponseArrayPresenter $authenticationResponseArrayPresenter
+    ) {
+        $response = $action->execute($httpRequest);
+
+        return $this->createSuccessResponse($authenticationResponseArrayPresenter->present($response));
+    }
+
+    public function checkResetCode(
+        CheckResetCodeHttpRequest $httpRequest,
+        CheckResetCodeAction $action
+    ) {
+        $response = $action->execute($httpRequest);
+
+        return $this->createSuccessResponse([
+            'message' => $response->getMessage(),
+            'token' => $response->getToken()
+        ]);
     }
 
     public function login(
