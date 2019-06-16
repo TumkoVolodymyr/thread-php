@@ -65,7 +65,9 @@
                                             >
                                                 <font-awesome-icon icon="heart" />
                                             </span>
-                                            {{ tweet.likesCount }}
+                                            <span @click.stop.prevent="onShowLikesAuthor">
+                                                {{ tweet.likesCount }}
+                                            </span>
                                         </a>
                                     </b-tooltip>
                                 </div>
@@ -122,6 +124,7 @@ import DefaultAvatar from '../../common/DefaultAvatar.vue';
 import showStatusToast from '../../mixin/showStatusToast';
 import { pusher } from '@/services/Pusher';
 import { SET_COMMENT } from '@/store/modules/comment/mutationTypes';
+import showLikesAuthorModal from '../../mixin/showLikesAuthorModal';
 
 export default {
     name: 'TweetContainer',
@@ -134,7 +137,7 @@ export default {
         DefaultAvatar,
     },
 
-    mixins: [showStatusToast],
+    mixins: [showStatusToast, showLikesAuthorModal],
 
     data: () => ({
         isEditTweetModalActive: false,
@@ -239,12 +242,16 @@ export default {
             try {
                 await this.likeOrDislikeTweet({
                     id: this.tweet.id,
-                    userId: this.user.id
+                    user: this.user
                 });
             } catch (error) {
                 console.error(error.message);
             }
-        }
+        },
+
+        onShowLikesAuthor() {
+            this.showLikesAuthorModal(this.tweet.likes);
+        },
     },
 };
 </script>
