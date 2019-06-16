@@ -68,7 +68,7 @@ export default {
         }
     },
 
-    async likeOrDislikeComment({ commit }, { id, userId }) {
+    async likeOrDislikeComment({ commit }, { id, user }) {
         commit(SET_LOADING, true, { root: true });
 
         try {
@@ -77,12 +77,12 @@ export default {
             if (data.status === 'added') {
                 commit(LIKE_COMMENT, {
                     id,
-                    userId
+                    user
                 });
             } else {
                 commit(DISLIKE_COMMENT, {
                     id,
-                    userId
+                    userId: user.id
                 });
             }
 

@@ -19,7 +19,8 @@ export const emptyUser = () => ({
 });
 
 export const likeMapper = like => ({
-    userId: like.user_id
+    userId: like.user_id,
+    author: userMapper(like.author)
 });
 
 export const commentMapper = comment => ({
