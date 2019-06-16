@@ -28,10 +28,10 @@ export default {
         state.comments = comments ;
     },
 
-    [LIKE_COMMENT]: (state, { id, userId }) => {
+    [LIKE_COMMENT]: (state, { id, user }) => {
         state.comments[id].likesCount++;
 
-        state.comments[id].likes.push({ userId });
+        state.comments[id].likes.push({ userId: user.id, author: user });
     },
 
     [DISLIKE_COMMENT]: (state, { id, userId }) => {

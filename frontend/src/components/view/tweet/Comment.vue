@@ -40,7 +40,9 @@
                                 >
                                     <font-awesome-icon icon="heart" />
                                 </span>
-                                {{ comment.likesCount }}
+                                <span @click.stop.prevent="onShowLikesAuthor">
+                                    {{ comment.likesCount }}
+                                </span>
                             </a>
                         </b-tooltip>
                         <br>
@@ -66,6 +68,7 @@
 import { mapGetters, mapActions } from 'vuex';
 import DefaultAvatar from '../../common/DefaultAvatar.vue';
 import showStatusToast from '../../mixin/showStatusToast';
+import showLikesAuthorModal from '../../mixin/showLikesAuthorModal';
 
 export default {
     name: 'Comment',
@@ -74,7 +77,7 @@ export default {
         DefaultAvatar,
     },
 
-    mixins: [showStatusToast],
+    mixins: [showStatusToast, showLikesAuthorModal],
 
     computed: {
         ...mapGetters('auth', {
@@ -99,7 +102,7 @@ export default {
             try {
                 await this.likeOrDislikeComment({
                     id: comentId,
-                    userId: this.user.id
+                    user: this.user
                 });
             } catch (error) {
                 console.error(error.message);
@@ -122,6 +125,10 @@ export default {
                     }
                 }
             });
+        },
+
+        onShowLikesAuthor() {
+            this.showLikesAuthorModal(this.comment.likes);
         },
     },
 
