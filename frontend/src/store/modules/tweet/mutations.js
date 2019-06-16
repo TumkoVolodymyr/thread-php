@@ -44,10 +44,10 @@ export default {
         state.tweets[id].commentsCount--;
     },
 
-    [LIKE_TWEET]: (state, { id, userId }) => {
+    [LIKE_TWEET]: (state, { id, user }) => {
         state.tweets[id].likesCount++;
 
-        state.tweets[id].likes.push({ userId });
+        state.tweets[id].likes.push({ userId: user.id, author: user });
     },
 
     [DISLIKE_TWEET]: (state, { id, userId }) => {

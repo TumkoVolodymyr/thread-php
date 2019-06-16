@@ -150,7 +150,7 @@ export default {
         }
     },
 
-    async likeOrDislikeTweet({ commit }, { id, userId }) {
+    async likeOrDislikeTweet({ commit }, { id, user }) {
         commit(SET_LOADING, true, { root: true });
 
         try {
@@ -159,12 +159,12 @@ export default {
             if (data.status === 'added') {
                 commit(LIKE_TWEET, {
                     id,
-                    userId
+                    user
                 });
             } else {
                 commit(DISLIKE_TWEET, {
                     id,
-                    userId
+                    userId: user.id
                 });
             }
 
