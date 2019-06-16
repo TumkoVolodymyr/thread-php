@@ -25,7 +25,7 @@ final class TweetRepository implements Paginable
     }
 
     public function commentedByUser(
-        int $userId,
+        int $currentUserId,
         int $page = self::DEFAULT_PAGE,
         int $perPage = self::DEFAULT_PER_PAGE,
         string $sort = self::DEFAULT_SORT,
@@ -34,7 +34,11 @@ final class TweetRepository implements Paginable
         return Tweet::leftJoin('comments', function($join) {
             $join->on('tweets.id', '=', 'comments.tweet_id');
         })
-            ->whereNotNull('comments.author_id')->where('comments.author_id', $userId)->orderBy($sort, $direction)->paginate($perPage, ['*'], null, $page);
+            ->whereNotNull('comments.author_id')
+            ->where('comments.author_id', $currentUserId)
+            ->groupBy('tweets.id')
+            ->orderBy($sort, $direction)
+            ->paginate($perPage, ['*'], null, $page);
     }
 
     /**
@@ -55,6 +59,25 @@ final class TweetRepository implements Paginable
         string $direction = self::DEFAULT_DIRECTION
     ): LengthAwarePaginator {
         return Tweet::where('author_id', $userId)
+            ->orderBy($sort, $direction)
+            ->paginate($perPage, ['*'], null, $page);
+    }
+
+    public function getPaginatedByUserIdAndCommentedByUser(
+        int $currentUserId,
+        int $userId,
+        int $page = self::DEFAULT_PAGE,
+        int $perPage = self::DEFAULT_PER_PAGE,
+        string $sort = self::DEFAULT_SORT,
+        string $direction = self::DEFAULT_DIRECTION
+    ): LengthAwarePaginator {
+        return Tweet::leftJoin('comments', function($join) {
+            $join->on('tweets.id', '=', 'comments.tweet_id');
+        })
+            ->whereNotNull('comments.author_id')
+            ->where('comments.author_id', $currentUserId)
+            ->groupBy('tweets.id')
+            ->where('tweets.author_id', $userId)
             ->orderBy($sort, $direction)
             ->paginate($perPage, ['*'], null, $page);
     }

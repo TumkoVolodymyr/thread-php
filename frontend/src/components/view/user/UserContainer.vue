@@ -1,6 +1,10 @@
 <template>
     <div class="user-container">
-        <TweetPreviewList :tweets="tweets" @infinite="infiniteHandler" />
+        <TweetPreviewList
+            :tweets="tweets"
+            @infinite="infiniteHandler"
+            :commentedTweets="commentedTweets"
+        />
         <NoContent :show="noContent" title="No tweets yet :)" />
     </div>
 </template>
@@ -24,17 +28,20 @@ export default {
     data: () => ({
         tweets: [],
         page: 1,
+        commentedTweets: [],
         noContent: false,
     }),
 
     async created() {
         try {
-            this.tweets = await this.fetchTweetsByUserId({
+            const data = {
                 userId: this.$route.params.id,
                 params: {
                     page: 1
                 }
-            });
+            };
+            this.tweets = await this.fetchTweetsByUserId(data);
+            this.updateCommentedTweets(data);
 
             if (!this.tweets.length) {
                 this.noContent = true;
@@ -47,16 +54,19 @@ export default {
     methods: {
         ...mapActions('tweet', [
             'fetchTweetsByUserId',
+            'fetchCommentedTweetsByUserId',
         ]),
 
         async infiniteHandler($state) {
             try {
-                const tweets = await this.fetchTweetsByUserId({
+                const data = {
                     userId: this.$route.params.id,
                     params: {
                         page: this.page + 1
                     }
-                });
+                };
+                const tweets = await this.fetchTweetsByUserId(data);
+                this.updateCommentedTweets(data);
 
                 if (tweets.length) {
                     this.tweets.push(...tweets);
@@ -70,6 +80,11 @@ export default {
                 $state.complete();
             }
         },
+
+        async updateCommentedTweets(data) {
+            const commentedTweets = await this.fetchCommentedTweetsByUserId(data);
+            this.commentedTweets = [...this.commentedTweets, ...commentedTweets];
+        }
     },
 };
 </script>
