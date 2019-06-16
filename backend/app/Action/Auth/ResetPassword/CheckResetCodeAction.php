@@ -11,6 +11,8 @@ use Illuminate\Auth\Passwords\PasswordBroker;
 
 final class CheckResetCodeAction
 {
+    private const CODE_IS_ALIVE = 10;
+
     private $userRepository;
     private $passwordBroker;
 
@@ -27,7 +29,7 @@ final class CheckResetCodeAction
     {
         $user = $this->userRepository->getByEmail($request->getEmail());
 
-        if ($user->reset_code_created_at > now()){
+        if ($user->reset_code_created_at->addMinutes(self::CODE_IS_ALIVE) < now()){
             throw new ResetCodeExpiredException();
         }
 
