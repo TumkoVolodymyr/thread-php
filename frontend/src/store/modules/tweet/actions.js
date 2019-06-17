@@ -45,7 +45,7 @@ export default {
         commit(SET_LOADING, true, { root: true });
         try {
             const tweets = await api.get(`/users/${userId}/tweets`, params);
-
+            commit(SET_TWEETS, tweets);
             commit(SET_LOADING, false, { root: true });
 
             return Promise.resolve(
@@ -54,6 +54,17 @@ export default {
         } catch (error) {
             commit(SET_LOADING, false, { root: true });
 
+            return Promise.reject(error);
+        }
+    },
+
+    async fetchCommentedTweetsByUserId({ commit }, { userId, params }) {
+        try {
+            const tweets = await api.get(`/users/${userId}/tweets/get-commented`, params);
+            return Promise.resolve(
+                tweets.map(tweet => tweet.id)
+            );
+        } catch (error) {
             return Promise.reject(error);
         }
     },

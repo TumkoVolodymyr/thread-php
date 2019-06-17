@@ -11,6 +11,7 @@ use App\Action\Tweet\AddTweetRequest;
 use App\Action\Tweet\DeleteTweetAction;
 use App\Action\Tweet\DeleteTweetRequest;
 use App\Action\Tweet\GetCommentedByCurrentUserTweetCollectionAction;
+use App\Action\Tweet\GetCommentedByCurrentUserTweetCollectionByUserIdAction;
 use App\Action\Tweet\GetTweetByIdAction;
 use App\Action\Tweet\GetTweetCollectionAction;
 use App\Action\Tweet\GetTweetCollectionByUserIdAction;
@@ -97,6 +98,24 @@ final class TweetController extends ApiController
     public function getTweetCollectionByUserId(string $userId, CollectionHttpRequest $request): ApiResponse
     {
         $response = $this->getTweetCollectionByUserIdAction->execute(
+            new GetTweetCollectionByUserIdRequest(
+                (int)$userId,
+                (int)$request->query('page'),
+                $request->query('sort'),
+                $request->query('direction')
+            )
+        );
+
+        return $this->createPaginatedResponse($response->getPaginator(), $this->presenter);
+    }
+
+    public function getCommentedByCurrentUserTweetCollectionByUserId(
+        string $userId,
+        CollectionHttpRequest $request,
+        GetCommentedByCurrentUserTweetCollectionByUserIdAction $action
+    ): ApiResponse
+    {
+        $response = $action->execute(
             new GetTweetCollectionByUserIdRequest(
                 (int)$userId,
                 (int)$request->query('page'),
