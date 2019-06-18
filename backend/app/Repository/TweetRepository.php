@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Auth;
 
 final class TweetRepository implements Paginable
 {
+    public const POPULARITY_SORT = 'popularity';
+
     public function create(array $fields): Tweet
     {
         return Tweet::create($fields);
@@ -24,6 +26,12 @@ final class TweetRepository implements Paginable
         string $direction = self::DEFAULT_DIRECTION,
         bool $isLiked = false
     ): LengthAwarePaginator {
+
+        if ($sort === self::POPULARITY_SORT){
+            $sort = 'likes_count';
+        }else{
+            $sort = self::DEFAULT_SORT;
+        }
         $qb = Tweet::orderBy($sort, $direction);
         if ($isLiked){
             $qb->leftJoin('likes', function($join) {
@@ -52,6 +60,13 @@ final class TweetRepository implements Paginable
             ->where('comments.author_id', $currentUserId)
             ->groupBy('tweets.id')
             ->orderBy($sort, $direction);
+
+        if ($sort === self::POPULARITY_SORT){
+            $sort = 'likes_count';
+        }else{
+            $sort = self::DEFAULT_SORT;
+        }
+        $qb->orderBy($sort, $direction);
 
         if ($isLiked){
             $qb->leftJoin('likes', function($join) {
@@ -84,12 +99,11 @@ final class TweetRepository implements Paginable
     {
         $tweets =  Tweet::where('id', $id)
             ->selectSub(function ($query) use ($id) {
-            $query->from('comments')
-                ->selectRaw('COUNT(comments.id)')
-                ->where('comments.tweet_id', $id )
-                ->where('comments.author_id', Auth::id());
-
-        }, 'user_comment_count')->get();
+                $query->from('comments')
+                    ->selectRaw('COUNT(comments.id)')
+                    ->where('comments.tweet_id', $id )
+                    ->where('comments.author_id', Auth::id());
+            }, 'user_comment_count')->get();
 
         $tweet = ($tweets->first());
         if (!($tweet instanceof Tweet)){

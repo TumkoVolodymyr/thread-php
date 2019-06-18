@@ -17,11 +17,11 @@ export default {
         commit(RESET_TWEETS);
     },
 
-    async fetchTweets({ commit }, { page, isLiked }) {
+    async fetchTweets({ commit }, { page, isLiked, sort }) {
         commit(SET_LOADING, true, { root: true });
 
         try {
-            const tweets = await api.get('/tweets', { page, isLiked });
+            const tweets = await api.get('/tweets', { page, isLiked, sort });
 
             commit(SET_TWEETS, tweets);
             commit(SET_LOADING, false, { root: true });

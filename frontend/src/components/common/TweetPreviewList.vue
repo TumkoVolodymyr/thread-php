@@ -1,6 +1,6 @@
 <template>
     <div class="tweets-container">
-        <div class="row">
+        <div class="row settings-container">
             <div class="col-sm text-center">
                 <span class="align-middle">
                     Card view
@@ -10,6 +10,33 @@
                         <input v-model="isCardTweetView" type="checkbox">
                         <span class="slider round"></span>
                     </label>
+                </span>
+            </div>
+            <div v-if="orderBy" class="col-sm text-center">
+                <span class="align-middle">
+                    Order by
+                </span>
+                <span class="align-middle">
+                    <b-button
+                        class="btn-add-tweet btn-order"
+                        rounded
+                        :class="{ active: isActive('creation') }"
+                        size="is-small"
+                        @click="onOrderByClick('creation')"
+                    >
+                        Creation
+                    </b-button>
+                </span>
+                <span class="align-middle">
+                    <b-button
+                        class="btn-add-tweet btn-order"
+                        rounded
+                        :class="{ active: isActive('popularity') }"
+                        size="is-small"
+                        @click="onOrderByClick('popularity')"
+                    >
+                        Popularity
+                    </b-button>
                 </span>
             </div>
         </div>
@@ -55,6 +82,10 @@ export default {
             type: Array,
             required: true
         },
+        orderBy: {
+            type: String,
+            required: false
+        }
     },
 
     data: () => ({
@@ -78,6 +109,14 @@ export default {
         tweetIsCommented(tweetId) {
             return this.commentedTweets.indexOf(tweetId) > -1;
         },
+
+        isActive(value) {
+            return value === this.orderBy;
+        },
+
+        onOrderByClick(value) {
+            this.$emit('onOrderByClick', value);
+        }
     },
 
     computed: {
@@ -86,6 +125,7 @@ export default {
         }
     }
 };
+
 </script>
 
 <style scoped lang="scss">
@@ -159,11 +199,20 @@ input:checked + .slider:before {
     display: flex;
     align-items: center;
 }
-span.align-middle {
+.align-middle {
     margin-right: 5px;
 }
 .flex {
     display: flex;
     flex-wrap: wrap;
+}
+
+.btn-order.active {
+    background: lightgrey;
+}
+
+.settings-container {
+    display: flex;
+    justify-content: space-between;
 }
 </style>
