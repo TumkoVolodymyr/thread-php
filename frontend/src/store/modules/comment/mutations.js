@@ -3,7 +3,7 @@ import { commentMapper } from '@/services/Normalizer';
 
 export default {
     [SET_COMMENTS]: (state, comments) => {
-        let commentsByIdMap = {};
+        let commentsByIdMap = { ...state.comments };
 
         comments.forEach(comment => {
             commentsByIdMap = {
