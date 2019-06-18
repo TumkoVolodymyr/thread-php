@@ -24,7 +24,8 @@ final class GetTweetCollectionAction
                 $request->getPage() ?: TweetRepository::DEFAULT_PAGE,
                 TweetRepository::DEFAULT_PER_PAGE,
                 $request->getSort() ?: TweetRepository::DEFAULT_SORT,
-                $request->getDirection() ?: TweetRepository::DEFAULT_DIRECTION
+                $request->getDirection() ?: TweetRepository::DEFAULT_DIRECTION,
+                $request->getIsLiked()
             )
         );
     }

@@ -12,7 +12,7 @@ final class GetCommentCollectionByTweetIdRequest extends GetCollectionRequest
 
     public function __construct(int $tweetId, ?int $page, ?string $sort, ?string $direction)
     {
-        parent::__construct($page, $sort, $direction);
+        parent::__construct($page, $sort, $direction, false);
 
         $this->tweetId = $tweetId;
     }

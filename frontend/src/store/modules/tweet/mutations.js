@@ -1,4 +1,5 @@
 import {
+    RESET_TWEETS,
     SET_TWEETS,
     SET_TWEET_IMAGE,
     SET_TWEET,
@@ -11,6 +12,10 @@ import {
 import { tweetMapper } from '@/services/Normalizer';
 
 export default {
+    [RESET_TWEETS]: (state) => {
+        state.tweets = {};
+    },
+
     [SET_TWEETS]: (state, tweets) => {
         state.tweets = {
             ...state.tweets,

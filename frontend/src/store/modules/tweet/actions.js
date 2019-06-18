@@ -1,5 +1,6 @@
 import {
     SET_TWEETS,
+    RESET_TWEETS,
     SET_TWEET_IMAGE,
     SET_TWEET,
     DELETE_TWEET,
@@ -11,11 +12,16 @@ import api from '@/api/Api';
 import { tweetMapper } from '@/services/Normalizer';
 
 export default {
-    async fetchTweets({ commit }, { page }) {
+
+    resetTweets({ commit }) {
+        commit(RESET_TWEETS);
+    },
+
+    async fetchTweets({ commit }, { page, isLiked }) {
         commit(SET_LOADING, true, { root: true });
 
         try {
-            const tweets = await api.get('/tweets', { page });
+            const tweets = await api.get('/tweets', { page, isLiked });
 
             commit(SET_TWEETS, tweets);
             commit(SET_LOADING, false, { root: true });
@@ -30,9 +36,9 @@ export default {
         }
     },
 
-    async fetchCommentedTweets({ }, { page }) {
+    async fetchCommentedTweets({ }, { page, isLiked }) {
         try {
-            const tweets = await api.get('/tweets/get-commented', { page });
+            const tweets = await api.get('/tweets/get-commented', { page, isLiked });
             return Promise.resolve(
                 tweets.map(tweet => tweet.id)
             );

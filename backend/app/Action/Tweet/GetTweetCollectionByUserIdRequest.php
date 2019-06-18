@@ -12,7 +12,7 @@ final class GetTweetCollectionByUserIdRequest extends GetCollectionRequest
 
     public function __construct(int $userId, ?int $page, ?string $sort, ?string $direction)
     {
-        parent::__construct($page, $sort, $direction);
+        parent::__construct($page, $sort, $direction, false);
 
         $this->userId = $userId;
     }

@@ -69,7 +69,8 @@ final class CommentController extends ApiController
             new GetCollectionRequest(
                 (int)$request->query('page'),
                 $request->query('sort'),
-                $request->query('direction')
+                $request->query('direction'),
+                false
             )
         );
 
