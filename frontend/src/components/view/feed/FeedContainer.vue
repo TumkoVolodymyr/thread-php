@@ -24,8 +24,10 @@
         </div>
 
         <TweetPreviewList
+            :orderBy="orderBy"
             :tweets="tweets"
             :commentedTweets="commentedTweets"
+            @onOrderByClick="onOrderByClick"
             @infinite="infiniteHandler" />
 
         <b-modal :active.sync="isNewTweetModalActive" has-modal-card>
@@ -57,6 +59,7 @@ export default {
         commentedTweets: [],
         page: 1,
         isLikedTweets: false,
+        orderBy: 'creation'
     }),
 
     async created() {
@@ -74,9 +77,15 @@ export default {
     },
 
     computed: {
-        ...mapGetters('tweet', {
-            tweets: 'tweetsSortedByCreatedDate'
-        }),
+        ...mapGetters('tweet', [
+            'tweetsSortedByCreatedDate',
+            'tweetsSortedByLikes'
+        ]),
+
+        tweets() {
+            return this.orderBy === 'creation' ? this.tweetsSortedByCreatedDate : this.tweetsSortedByLikes;
+        },
+
         likedTweetsBtnText() {
             return !this.isLikedTweets ? 'Liked tweets' : 'All tweets';
         }
@@ -108,7 +117,8 @@ export default {
             try {
                 const page = {
                     page: this.page + 1,
-                    isLiked: this.isLikedTweets
+                    isLiked: this.isLikedTweets,
+                    sort: this.orderBy
                 };
                 const tweets = await this.fetchTweets(page);
                 this.updateCommentedTweets(page);
@@ -131,13 +141,19 @@ export default {
         },
 
         async initTweets() {
+            this.resetTweets();
             try {
-                const page = { page: 1, isLiked: this.isLikedTweets };
+                const page = { page: 1, isLiked: this.isLikedTweets, sort: this.orderBy };
                 await this.fetchTweets(page);
                 this.updateCommentedTweets(page);
             } catch (error) {
                 this.showErrorMessage(error.message);
             }
+        },
+
+        async onOrderByClick(value) {
+            this.orderBy = value;
+            await this.initTweets();
         }
     },
 };
