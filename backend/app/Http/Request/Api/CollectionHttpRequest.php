@@ -14,6 +14,7 @@ final class CollectionHttpRequest extends ApiFormRequest
         return [
             'page' => 'integer|min:1',
             'sort' => 'string',
+            'isLiked' => 'in:true,false',
             'direction' => [
                 'string',
                 Rule::in(['asc', 'desc'])

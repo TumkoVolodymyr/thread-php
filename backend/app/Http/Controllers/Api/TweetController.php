@@ -64,11 +64,13 @@ final class TweetController extends ApiController
 
     public function getTweetCollection(CollectionHttpRequest $request): ApiResponse
     {
+        $isLiked = $request->query('isLiked') === 'true';
         $response = $this->getTweetCollectionAction->execute(
             new GetCollectionRequest(
                 (int)$request->query('page'),
                 $request->query('sort'),
-                $request->query('direction')
+                $request->query('direction'),
+                $isLiked
             )
         );
 
@@ -77,11 +79,13 @@ final class TweetController extends ApiController
 
     public function getCommentedByCurrentUserTweetCollection(CollectionHttpRequest $request): ApiResponse
     {
+        $isLiked = $request->query('isLiked') === 'true';
         $response = $this->getCommentedByCurrentUserTweetCollectionAction->execute(
             new GetCollectionRequest(
                 (int)$request->query('page'),
                 $request->query('sort'),
-                $request->query('direction')
+                $request->query('direction'),
+                (bool) $isLiked
             )
         );
 

@@ -12,6 +12,15 @@
             >
                 Tweet :)
             </b-button>
+            <b-button
+                class="btn-add-tweet"
+                rounded
+                size="is-medium"
+                type="is-primary"
+                @click="onLikedTweetsClick"
+            >
+                {{likedTweetsBtnText}}
+            </b-button>
         </div>
 
         <TweetPreviewList
@@ -47,16 +56,11 @@ export default {
         isNewTweetModalActive: false,
         commentedTweets: [],
         page: 1,
+        isLikedTweets: false,
     }),
 
     async created() {
-        try {
-            const page = { page: 1 };
-            await this.fetchTweets(page);
-            this.updateCommentedTweets(page);
-        } catch (error) {
-            this.showErrorMessage(error.message);
-        }
+        await this.initTweets();
 
         const channel = pusher.subscribe('private-tweets');
 
@@ -73,16 +77,27 @@ export default {
         ...mapGetters('tweet', {
             tweets: 'tweetsSortedByCreatedDate'
         }),
+        likedTweetsBtnText() {
+            return !this.isLikedTweets ? 'Liked tweets' : 'All tweets';
+        }
     },
 
     methods: {
         ...mapActions('tweet', [
             'fetchTweets',
+            'resetTweets',
             'fetchCommentedTweets',
         ]),
 
         onAddTweetClick() {
             this.showAddTweetModal();
+        },
+
+        async onLikedTweetsClick() {
+            this.resetTweets();
+            this.page = 1;
+            this.isLikedTweets = !this.isLikedTweets;
+            await this.initTweets();
         },
 
         showAddTweetModal() {
@@ -91,7 +106,10 @@ export default {
 
         async infiniteHandler($state) {
             try {
-                const page = { page: this.page + 1 };
+                const page = {
+                    page: this.page + 1,
+                    isLiked: this.isLikedTweets
+                };
                 const tweets = await this.fetchTweets(page);
                 this.updateCommentedTweets(page);
 
@@ -110,6 +128,16 @@ export default {
         async updateCommentedTweets(page) {
             const commentedTweets = await this.fetchCommentedTweets(page);
             this.commentedTweets = [...this.commentedTweets, ...commentedTweets];
+        },
+
+        async initTweets() {
+            try {
+                const page = { page: 1, isLiked: this.isLikedTweets };
+                await this.fetchTweets(page);
+                this.updateCommentedTweets(page);
+            } catch (error) {
+                this.showErrorMessage(error.message);
+            }
         }
     },
 };
@@ -130,6 +158,7 @@ export default {
 .btn-add-tweet {
     transition: 0.2s ease-out all;
     box-shadow: 1px 5px 5px 0 #00000020;
+    margin-right: 10px;
 
     &:hover {
         box-shadow: 1px 1px 0 0 #00000020;
