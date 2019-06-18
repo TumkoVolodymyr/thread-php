@@ -46,7 +46,7 @@
                                             <span
                                                 class="icon is-medium has-text-info"
                                                 :class="{
-                                                    'has-text-danger': tweetIsCommentedByUser(tweet.id, user.id)
+                                                    'has-text-danger': tweet.isCommented
                                                 }"
                                             >
                                                 <font-awesome-icon icon="comments" />
@@ -83,13 +83,11 @@
                     </div>
                 </div>
 
-                <template v-for="comment in getCommentsByTweetId(tweet.id)">
-                    <Comment
-                        :key="comment.id"
-                        :comment="comment"
-                        @edit-comment="onEditComment"
-                    />
-                </template>
+                <CommentList
+                    :comments="comments"
+                    @infinite="infiniteHandler"
+                    @edit-comment="onEditComment"
+                />
 
                 <NewCommentForm :tweet-id="tweet.id" />
             </div>
@@ -116,7 +114,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
-import Comment from './Comment.vue';
+import CommentList from './CommentList.vue';
 import NewCommentForm from './NewCommentForm.vue';
 import EditCommentForm from './EditCommentForm.vue';
 import EditTweetForm from './EditTweetForm.vue';
@@ -131,7 +129,7 @@ export default {
 
     components: {
         EditCommentForm,
-        Comment,
+        CommentList,
         NewCommentForm,
         EditTweetForm,
         DefaultAvatar,
@@ -140,6 +138,7 @@ export default {
     mixins: [showStatusToast, showLikesAuthorModal],
 
     data: () => ({
+        page: 1,
         isEditTweetModalActive: false,
         editableComment: null,
         isImageModalActive: false
@@ -148,8 +147,6 @@ export default {
     async created() {
         try {
             await this.fetchTweetById(this.$route.params.id);
-
-            this.fetchComments(this.tweet.id);
 
             const channel = pusher.subscribe(`private-tweet.${this.tweet.id}`);
 
@@ -183,6 +180,10 @@ export default {
             set: function (val) {
                 this.editableComment = val;
             }
+        },
+
+        comments() {
+            return  this.getCommentsByTweetId(this.tweet.id);
         },
 
         tweet() {
@@ -251,6 +252,21 @@ export default {
 
         onShowLikesAuthor() {
             this.showLikesAuthorModal(this.tweet.likes);
+        },
+
+        async infiniteHandler($state) {
+            try {
+                const comments = await this.fetchComments({ tweetId: this.tweet.id, page: this.page });
+                if (comments.length) {
+                    this.page += 1;
+                    $state.loaded();
+                } else {
+                    $state.complete();
+                }
+            } catch (error) {
+                this.showErrorMessage(error.message);
+                $state.complete();
+            }
         },
     },
 };

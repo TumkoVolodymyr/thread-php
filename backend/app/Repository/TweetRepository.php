@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Tweet;
+use App\Exceptions\TweetNotFoundException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Auth;
 
 final class TweetRepository implements Paginable
 {
@@ -49,6 +51,29 @@ final class TweetRepository implements Paginable
     public function getById(int $id): Tweet
     {
         return Tweet::findOrFail($id);
+    }
+
+    /**
+     * @param int $id
+     * @return Tweet
+     * @throws ModelNotFoundException
+     */
+    public function getByIdWithCurrentUserCommentsCount(int $id): ?Tweet
+    {
+        $tweets =  Tweet::where('id', $id)
+            ->selectSub(function ($query) use ($id) {
+            $query->from('comments')
+                ->selectRaw('COUNT(comments.id)')
+                ->where('comments.tweet_id', $id )
+                ->where('comments.author_id', Auth::id());
+
+        }, 'user_comment_count')->get();
+
+        $tweet = ($tweets->first());
+        if (!($tweet instanceof Tweet)){
+            throw new TweetNotFoundException();
+        }
+        return $tweet;
     }
 
     public function getPaginatedByUserId(

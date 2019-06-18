@@ -13,18 +13,19 @@ import { INCREMENT_COMMENTS_COUNT, DECREMENT_COMMENTS_COUNT } from '../tweet/mut
 import { commentMapper } from '@/services/Normalizer';
 
 export default {
-    async fetchComments({ commit }, tweetId) {
+    async fetchComments({ commit }, { tweetId, page }) {
         commit(SET_LOADING, true, { root: true });
 
         try {
             const comments = await api.get(`/tweets/${tweetId}/comments`, {
-                direction: 'asc',
+                direction: 'desc',
+                page
             });
 
             commit(SET_COMMENTS, comments);
             commit(SET_LOADING, false, { root: true });
 
-            return Promise.resolve();
+            return Promise.resolve(comments);
         } catch (error) {
             commit(SET_LOADING, false, { root: true });
 

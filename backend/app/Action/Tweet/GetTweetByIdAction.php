@@ -18,7 +18,7 @@ final class GetTweetByIdAction
 
     public function execute(GetByIdRequest $request): GetTweetByIdResponse
     {
-        $tweet = $this->repository->getById($request->getId());
+        $tweet = $this->repository->getByIdWithCurrentUserCommentsCount($request->getId());
 
         return new GetTweetByIdResponse($tweet);
     }

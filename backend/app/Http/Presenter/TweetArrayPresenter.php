@@ -20,6 +20,8 @@ final class TweetArrayPresenter implements CollectionAsArrayPresenter
 
     public function present(Tweet $tweet): array
     {
+        $commentsCounter = $tweet->user_comment_count??0;
+        $isCommented = ($commentsCounter>0)?true:false;
         return [
             'id' => $tweet->getId(),
             'text' => $tweet->getText(),
@@ -27,6 +29,7 @@ final class TweetArrayPresenter implements CollectionAsArrayPresenter
             'created_at' => $tweet->getCreatedAt()->toDateTimeString(),
             'author' => $this->userPresenter->present($tweet->getAuthor()),
             'comments_count' => $tweet->getCommentsCount(),
+            'is_commented' => $isCommented,
             'likes_count' => $tweet->getLikesCount(),
             'likes' => $this->likeArrayPresenter->presentCollection($tweet->likes)
         ];
