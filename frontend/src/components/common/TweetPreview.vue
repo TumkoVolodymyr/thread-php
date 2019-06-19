@@ -54,6 +54,7 @@
                             </span>
                             {{ tweet.likesCount }}
                         </a>
+                        <ShareBtn :url="url" />
                     </div>
                 </nav>
             </div>
@@ -64,12 +65,14 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import DefaultAvatar from './DefaultAvatar.vue';
+import ShareBtn from './ShareBtn.vue';
 
 export default {
     name: 'TweetPreview',
 
     components: {
         DefaultAvatar,
+        ShareBtn,
     },
 
     props: {
@@ -95,6 +98,14 @@ export default {
         ...mapGetters('tweet', [
             'tweetIsLikedByUser'
         ]),
+
+        url() {
+            const rout = this.$router.resolve({
+                name: 'tweet-page',
+                params: { id: this.tweet.id },
+            });
+            return window.location.origin + rout.href;
+        }
     },
 
 };

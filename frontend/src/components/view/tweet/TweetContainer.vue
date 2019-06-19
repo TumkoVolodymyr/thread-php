@@ -70,6 +70,7 @@
                                             </span>
                                         </a>
                                     </b-tooltip>
+                                    <ShareBtn :url="url" />
                                 </div>
                             </nav>
                         </div>
@@ -119,6 +120,7 @@ import NewCommentForm from './NewCommentForm.vue';
 import EditCommentForm from './EditCommentForm.vue';
 import EditTweetForm from './EditTweetForm.vue';
 import DefaultAvatar from '../../common/DefaultAvatar.vue';
+import ShareBtn from '../../common/ShareBtn.vue';
 import showStatusToast from '../../mixin/showStatusToast';
 import { pusher } from '@/services/Pusher';
 import { SET_COMMENT } from '@/store/modules/comment/mutationTypes';
@@ -133,6 +135,7 @@ export default {
         NewCommentForm,
         EditTweetForm,
         DefaultAvatar,
+        ShareBtn,
     },
 
     mixins: [showStatusToast, showLikesAuthorModal],
@@ -189,6 +192,14 @@ export default {
         tweet() {
             return this.getTweetById(this.$route.params.id);
         },
+
+        url() {
+            const rout = this.$router.resolve({
+                name: 'tweet-page',
+                params: { id: this.tweet.id },
+            });
+            return window.location.origin + rout.href;
+        }
     },
 
     methods: {
@@ -310,5 +321,11 @@ export default {
 
 .column {
     padding-bottom: 0;
+}
+
+.level-left ul {
+    list-style: none;
+    margin: initial;
+    margin-left: .75rem;
 }
 </style>
