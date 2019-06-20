@@ -36,17 +36,6 @@ export default {
         }
     },
 
-    async fetchCommentedTweets({ }, { page, isLiked }) {
-        try {
-            const tweets = await api.get('/tweets/get-commented', { page, isLiked });
-            return Promise.resolve(
-                tweets.map(tweet => tweet.id)
-            );
-        } catch (error) {
-            return Promise.reject(error);
-        }
-    },
-
     async fetchTweetsByUserId({ commit }, { userId, params }) {
         commit(SET_LOADING, true, { root: true });
         try {
@@ -60,17 +49,6 @@ export default {
         } catch (error) {
             commit(SET_LOADING, false, { root: true });
 
-            return Promise.reject(error);
-        }
-    },
-
-    async fetchCommentedTweetsByUserId({ commit }, { userId, params }) {
-        try {
-            const tweets = await api.get(`/users/${userId}/tweets/get-commented`, params);
-            return Promise.resolve(
-                tweets.map(tweet => tweet.id)
-            );
-        } catch (error) {
             return Promise.reject(error);
         }
     },

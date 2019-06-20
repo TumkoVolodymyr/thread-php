@@ -37,7 +37,7 @@
                         <a class="level-item auto-cursor">
                             <span class="icon is-medium has-text-info"
                               :class="{
-                                'has-text-danger': isCommented
+                                'has-text-danger': tweet.isCommented
                               }"
                             >
                                 <font-awesome-icon icon="comments" />
@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters } from 'vuex';
 import DefaultAvatar from './DefaultAvatar.vue';
 
 export default {
@@ -76,16 +76,8 @@ export default {
         tweet: {
             type: Object,
             required: true,
-        },
-        isCommented: {
-            type: Boolean,
-            required: true,
         }
     },
-
-    data: () => ({
-        commentByUserTweets: null
-    }),
 
     computed: {
         ...mapGetters('auth', {

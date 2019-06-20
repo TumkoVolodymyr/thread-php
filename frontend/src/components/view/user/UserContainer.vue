@@ -3,7 +3,6 @@
         <TweetPreviewList
             :tweets="tweets"
             @infinite="infiniteHandler"
-            :commentedTweets="commentedTweets"
         />
         <NoContent :show="noContent" title="No tweets yet :)" />
     </div>
@@ -28,7 +27,6 @@ export default {
     data: () => ({
         tweets: [],
         page: 1,
-        commentedTweets: [],
         noContent: false,
     }),
 
@@ -41,7 +39,6 @@ export default {
                 }
             };
             this.tweets = await this.fetchTweetsByUserId(data);
-            this.updateCommentedTweets(data);
 
             if (!this.tweets.length) {
                 this.noContent = true;
@@ -54,7 +51,6 @@ export default {
     methods: {
         ...mapActions('tweet', [
             'fetchTweetsByUserId',
-            'fetchCommentedTweetsByUserId',
         ]),
 
         async infiniteHandler($state) {
@@ -66,7 +62,6 @@ export default {
                     }
                 };
                 const tweets = await this.fetchTweetsByUserId(data);
-                this.updateCommentedTweets(data);
 
                 if (tweets.length) {
                     this.tweets.push(...tweets);
@@ -81,10 +76,6 @@ export default {
             }
         },
 
-        async updateCommentedTweets(data) {
-            const commentedTweets = await this.fetchCommentedTweetsByUserId(data);
-            this.commentedTweets = [...this.commentedTweets, ...commentedTweets];
-        }
     },
 };
 </script>

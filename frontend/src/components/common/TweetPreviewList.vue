@@ -52,7 +52,6 @@
                     v-bind:is="currentTweetViewComponent"
                     :key="tweet.id"
                     :tweet="tweet"
-                    :isCommented="tweetIsCommented(tweet.id)"
                     @click="onTweetClick"
                 ></component>
             </template>
@@ -78,10 +77,7 @@ export default {
             type: Array,
             required: true
         },
-        commentedTweets: {
-            type: Array,
-            required: true
-        },
+
         orderBy: {
             type: String,
             required: false
@@ -104,10 +100,6 @@ export default {
 
         infiniteHandler($state) {
             this.$emit('infinite', $state);
-        },
-
-        tweetIsCommented(tweetId) {
-            return this.commentedTweets.indexOf(tweetId) > -1;
         },
 
         isActive(value) {

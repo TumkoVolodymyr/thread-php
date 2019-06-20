@@ -33,6 +33,14 @@ final class TweetRepository implements Paginable
             $sort = self::DEFAULT_SORT;
         }
         $qb = Tweet::orderBy($sort, $direction);
+
+        $qb->selectSub(function ($query) {
+            $query->from('comments')
+                ->selectRaw('COUNT(*)')
+                ->where('comments.author_id', Auth::id())
+                ->whereRaw('comments.tweet_id = tweets.id')
+                ;
+        }, 'user_comment_count');
         if ($isLiked){
             $qb->leftJoin('likes', function($join) {
                 $join->on('tweets.id', '=', 'likes.likeable_id');
@@ -41,43 +49,8 @@ final class TweetRepository implements Paginable
                 ->where('likes.user_id', Auth::id())
                 ->where('likes.likeable_type', Tweet::class)
                 ->groupBy('tweets.id');
-        }
-        return $qb->paginate($perPage, ['*'], null, $page);
-    }
-
-    public function commentedByUser(
-        int $currentUserId,
-        int $page = self::DEFAULT_PAGE,
-        int $perPage = self::DEFAULT_PER_PAGE,
-        string $sort = self::DEFAULT_SORT,
-        string $direction = self::DEFAULT_DIRECTION,
-        bool $isLiked = false
-    ): LengthAwarePaginator {
-        $qb = Tweet::leftJoin('comments', function($join) {
-            $join->on('tweets.id', '=', 'comments.tweet_id');
-        })
-            ->whereNotNull('comments.author_id')
-            ->where('comments.author_id', $currentUserId)
-            ->groupBy('tweets.id')
-            ->orderBy($sort, $direction);
-
-        if ($sort === self::POPULARITY_SORT){
-            $sort = 'likes_count';
-        }else{
-            $sort = self::DEFAULT_SORT;
-        }
-        $qb->orderBy($sort, $direction);
-
-        if ($isLiked){
-            $qb->leftJoin('likes', function($join) {
-                $join->on('tweets.id', '=', 'likes.likeable_id');
-            })
-                ->whereNotNull('likes.user_id')
-                ->where('likes.user_id', Auth::id())
-                ->where('likes.likeable_type', Tweet::class);
         };
-        $qb->paginate($perPage, ['*'], null, $page);
-        return    $qb->paginate($perPage, ['*'], null, $page);
+        return $qb->paginate($perPage, ['*'], null, $page);
     }
 
     /**
@@ -119,28 +92,16 @@ final class TweetRepository implements Paginable
         string $sort = self::DEFAULT_SORT,
         string $direction = self::DEFAULT_DIRECTION
     ): LengthAwarePaginator {
-        return Tweet::where('author_id', $userId)
-            ->orderBy($sort, $direction)
-            ->paginate($perPage, ['*'], null, $page);
-    }
-
-    public function getPaginatedByUserIdAndCommentedByUser(
-        int $currentUserId,
-        int $userId,
-        int $page = self::DEFAULT_PAGE,
-        int $perPage = self::DEFAULT_PER_PAGE,
-        string $sort = self::DEFAULT_SORT,
-        string $direction = self::DEFAULT_DIRECTION
-    ): LengthAwarePaginator {
-        return Tweet::leftJoin('comments', function($join) {
-            $join->on('tweets.id', '=', 'comments.tweet_id');
-        })
-            ->whereNotNull('comments.author_id')
-            ->where('comments.author_id', $currentUserId)
-            ->groupBy('tweets.id')
-            ->where('tweets.author_id', $userId)
-            ->orderBy($sort, $direction)
-            ->paginate($perPage, ['*'], null, $page);
+        $qb = Tweet::where('author_id', $userId)
+            ->orderBy($sort, $direction);
+        $qb->selectSub(function ($query) {
+            $query->from('comments')
+                ->selectRaw('COUNT(*)')
+                ->where('comments.author_id', Auth::id())
+                ->whereRaw('comments.tweet_id = tweets.id')
+            ;
+        }, 'user_comment_count');
+        return $qb->paginate($perPage, ['*'], null, $page);
     }
 
     public function save(Tweet $tweet): Tweet
