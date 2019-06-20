@@ -26,7 +26,6 @@
         <TweetPreviewList
             :orderBy="orderBy"
             :tweets="tweets"
-            :commentedTweets="commentedTweets"
             @onOrderByClick="onOrderByClick"
             @infinite="infiniteHandler" />
 
@@ -56,7 +55,6 @@ export default {
 
     data: () => ({
         isNewTweetModalActive: false,
-        commentedTweets: [],
         page: 1,
         isLikedTweets: false,
         orderBy: 'creation'
@@ -95,7 +93,6 @@ export default {
         ...mapActions('tweet', [
             'fetchTweets',
             'resetTweets',
-            'fetchCommentedTweets',
         ]),
 
         onAddTweetClick() {
@@ -121,7 +118,6 @@ export default {
                     sort: this.orderBy
                 };
                 const tweets = await this.fetchTweets(page);
-                this.updateCommentedTweets(page);
 
                 if (tweets.length) {
                     this.page += 1;
@@ -135,17 +131,11 @@ export default {
             }
         },
 
-        async updateCommentedTweets(page) {
-            const commentedTweets = await this.fetchCommentedTweets(page);
-            this.commentedTweets = [...this.commentedTweets, ...commentedTweets];
-        },
-
         async initTweets() {
             this.resetTweets();
             try {
                 const page = { page: 1, isLiked: this.isLikedTweets, sort: this.orderBy };
                 await this.fetchTweets(page);
-                this.updateCommentedTweets(page);
             } catch (error) {
                 this.showErrorMessage(error.message);
             }

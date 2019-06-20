@@ -36,14 +36,12 @@ Route::prefix('v1')->group(function () {
             Route::get('/', 'UserController@getUserCollection');
             Route::get('/{id}', 'UserController@getUserById');
             Route::get('/{id}/tweets', 'TweetController@getTweetCollectionByUserId');
-            Route::get('/{id}/tweets/get-commented', 'TweetController@getCommentedByCurrentUserTweetCollectionByUserId');
         });
 
         Route::group([
             'prefix' => '/tweets',
         ], function () {
             Route::get('/', 'TweetController@getTweetCollection');
-            Route::get('/get-commented', 'TweetController@getCommentedByCurrentUserTweetCollection');
             Route::post('/', 'TweetController@addTweet');
             Route::get('/{id}', 'TweetController@getTweetById');
             Route::get('/{id}/comments', 'CommentController@getCommentCollectionByTweetId');
