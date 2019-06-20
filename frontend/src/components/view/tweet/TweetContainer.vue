@@ -171,7 +171,6 @@ export default {
 
         ...mapGetters('comment', [
             'getCommentsByTweetId',
-            'tweetIsCommentedByUser'
         ]),
 
         isEditCommentModalActive: {
